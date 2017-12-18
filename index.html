@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>轮播图</title>
+    <style type="text/css">
+        body, div, img, ul, li, a {
+            margin: 0;
+            padding: 0;
+        }
+
+        img {
+            display: block;
+            border: none;
+        }
+
+        ul, li {
+            list-style: none;
+        }
+
+        a, a:hover, a:active, a:target {
+            text-decoration: none;
+            color: #000;
+        }
+
+        .outer {
+            position: relative;
+            margin: 0 auto;
+            width: 1000px;
+            height: 300px;
+            overflow: hidden;
+            box-shadow: 3px 3px 10px 0 #ccc;
+        }
+
+        .inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5000px;
+            height: 300px;
+        }
+
+        .inner img {
+            float: left;
+            width: 1000px;
+            height: 300px;
+        }
+
+        .tip {
+            position: absolute;
+            right: 50%;
+            margin-right: -70px;
+            bottom: 20px;
+            overflow: hidden;
+        }
+
+        .tip li {
+            float: left;
+            margin-left: 7px;
+            width: 38px;
+            height: 8px;
+            cursor: pointer;
+            background: #ccc;
+            border-radius: 20px;
+        }
+
+        .tip li.bg {
+            background: #fff;
+        }
+
+        #arr {
+            display: none;
+        }
+
+        #arr span {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            margin-top: -20px;
+            background: #000;
+            cursor: pointer;
+            line-height: 40px;
+            text-align: center;
+            font-weight: bold;
+            font-family: '黑体';
+            font-size: 30px;
+            color: #fff;
+            opacity: 0.3;
+            border: 1px solid #fff;
+        }
+
+        #arr #right {
+            right: 5px;
+            left: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="outer" id="outer">
+    <div class="inner" id="inner">
+        <img src="img/1.jpg">
+        <img src="img/2.jpg">
+        <img src="img/3.jpg">
+        <img src="img/4.jpg">
+        <img src="img/1.jpg">
+    </div>
+    <ul class="tip" id="tip">
+        <li class="bg"></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <div id="arr"><span id="left">&lt;</span><span id="right">&gt;</span></div>
+</div>
+
+<script charset="utf-8" type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script charset="utf-8" type="text/javascript">
+   
+   var s = 0,c =4;
+   var outer = $("#outer"),
+       inner = $("#inner"),
+       tip = $("#tip"),
+       tipList = $("#tip li"),
+       arr = $("#arr"),
+       arrLeft = $("#left"),
+       arrRight = $("#right");
+
+    // 点击焦点实现切换
+        $(tipList).click(function(){
+            clearInterval(timer);
+            s = $(this).index();
+            $(inner).stop().animate({left: -s * 1000}, 500);
+            changeTip();
+            timer = setInterval(autoMove, 2000);
+        })
+    // tip焦点切换
+         function changeTip(){
+             var t = s;
+             t >= 4 ? t = 0 : null;
+            $(tipList).eq(t).addClass("bg").siblings().removeClass("bg");
+         }    
+    // 自动轮播
+         function autoMove(){
+            s++;
+            if(s > c) {
+                $(inner).css("left",0);
+                s = 1;
+            }
+            $(inner).stop().animate({left: -s * 1000}, 500);
+            changeTip();
+         }
+         var timer = setInterval(autoMove, 2000);
+    // 下一张
+        $(arrRight).click(function () {
+            clearInterval(timer);
+            autoMove();
+            timer = setInterval(autoMove, 2000);
+        })
+   // 上一张
+        $(arrLeft).click(function () {
+            clearInterval(timer);
+            //如果pic为0,就是显示着第一张的时候，如果再次点击左按钮。需要将ul抽回到假的第一张显示的位置
+            if(s == 0) {
+                s = 4;
+                $(inner).css("left",-s * 1000);
+            }
+            s--;
+            $(inner).stop().animate({left: -s * 1000}, 500);
+            changeTip();
+            timer = setInterval(autoMove, 2000);
+        })
+    // 鼠标移入显示左右按钮
+        $(outer).mouseover(function () {
+            $(arr).show();
+//            clearInterval(timer);
+        });
+        $(outer).mouseout(function () {
+            $(arr).hide();
+//            timer = setInterval(autoMove, 2000);
+        });
+</script>
+</body>
+</html>
